@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import heroImg from "@/assets/hero-flower-of-life.jpg";
+import heroImg from "@/assets/hero-flower-of-life.png";
 import { products } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { ReviewList } from "@/components/ReviewList";
