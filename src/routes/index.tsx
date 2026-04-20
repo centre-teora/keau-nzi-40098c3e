@@ -8,7 +8,7 @@ import { Sparkles, Heart, Leaf } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lumiā — Géométrie sacrée pour votre pratique spirituelle" },
+      { title: "Keau-Nzi — Géométrie sacrée pour votre pratique spirituelle" },
       {
         name: "description",
         content:
@@ -122,7 +122,7 @@ function HomePage() {
             Là où la matière rejoint le sacré.
           </h2>
           <p className="text-muted-foreground leading-relaxed text-lg">
-            Lumiā est née d'une intuition : nos objets du quotidien peuvent
+            Keau-Nzi est née d'une intuition : nos objets du quotidien peuvent
             devenir des supports d'éveil. La Fleur de Vie base 12, gravée dans
             la mémoire des civilisations, traverse aujourd'hui nos tapis et nos
             serviettes pour ancrer chaque geste dans la beauté.

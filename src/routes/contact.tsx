@@ -7,12 +7,12 @@ import { Mail, Send } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Lumiā" },
+      { title: "Contact — Keau-Nzi" },
       {
         name: "description",
-        content: "Contactez l'équipe Lumiā pour toute question sur nos produits sacrés.",
+        content: "Contactez l'équipe Keau-Nzi pour toute question sur nos produits sacrés.",
       },
-      { property: "og:title", content: "Contact — Lumiā" },
+      { property: "og:title", content: "Contact — Keau-Nzi" },
       { property: "og:description", content: "Une question, un message ? Écrivez-nous." },
     ],
   }),

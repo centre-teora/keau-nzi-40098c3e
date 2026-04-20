@@ -4,13 +4,13 @@ import meditationImg from "@/assets/about-meditation.jpg";
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
     meta: [
-      { title: "À propos — Lumiā · Notre mission spirituelle" },
+      { title: "À propos — Keau-Nzi · Notre mission spirituelle" },
       {
         name: "description",
         content:
-          "Lumiā : faire des objets du quotidien des supports d'éveil. Notre mission, nos valeurs, notre engagement éthique.",
+          "Keau-Nzi : faire des objets du quotidien des supports d'éveil. Notre mission, nos valeurs, notre engagement éthique.",
       },
-      { property: "og:title", content: "À propos de Lumiā" },
+      { property: "og:title", content: "À propos de Keau-Nzi" },
       { property: "og:description", content: "Notre mission : aligner matière et sacré." },
       { property: "og:image", content: meditationImg },
     ],
@@ -24,7 +24,7 @@ function AboutPage() {
       <div className="container-spirit max-w-3xl">
         <header className="text-center mb-12">
           <p className="text-xs uppercase tracking-[0.4em] text-gold mb-3">Notre essence</p>
-          <h1 className="text-4xl md:text-5xl font-display">L'origine de Lumiā</h1>
+          <h1 className="text-4xl md:text-5xl font-display">L'origine de Keau-Nzi</h1>
           <div className="divider-gold mt-8 max-w-xs mx-auto" />
         </header>
 
@@ -41,7 +41,7 @@ function AboutPage() {
 
         <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground leading-relaxed text-lg">
           <p>
-            Lumiā est née d'une <span className="text-gold">intuition</span> : et
+            Keau-Nzi est née d'une <span className="text-gold">intuition</span> : et
             si les objets que nous touchons chaque jour pouvaient devenir des
             supports d'éveil ?
           </p>

@@ -32,14 +32,14 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lumiā — Tapis & serviettes Fleur de Vie sacrée" },
+      { title: "Keau-Nzi — Tapis & serviettes Fleur de Vie sacrée" },
       {
         name: "description",
         content:
           "Tapis de yoga et serviettes premium imprimés Fleur de Vie base 12. Géométrie sacrée, production éthique, alignement intérieur.",
       },
-      { name: "author", content: "Lumiā" },
-      { property: "og:title", content: "Lumiā — Géométrie sacrée pour votre pratique" },
+      { name: "author", content: "Keau-Nzi" },
+      { property: "og:title", content: "Keau-Nzi — Géométrie sacrée pour votre pratique" },
       {
         property: "og:description",
         content:
