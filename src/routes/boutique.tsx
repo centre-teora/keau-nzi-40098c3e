@@ -8,13 +8,13 @@ export const Route = createFileRoute("/boutique")({
   loader: () => listShopProducts(),
   head: () => ({
     meta: [
-      { title: "Boutique — Lumiā · Tapis & serviettes Fleur de Vie" },
+      { title: "Boutique — Keau-Nzi · Tapis & serviettes Fleur de Vie" },
       {
         name: "description",
         content:
           "Notre collection complète : tapis de yoga et serviettes imprimés Fleur de Vie base 12, géométrie sacrée premium.",
       },
-      { property: "og:title", content: "Boutique Lumiā — Géométrie sacrée" },
+      { property: "og:title", content: "Boutique Keau-Nzi — Géométrie sacrée" },
       {
         property: "og:description",
         content: "Découvrez tous nos objets sacrés pour votre pratique.",

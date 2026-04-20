@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-border">
       <div className="container-spirit py-12 grid gap-10 md:grid-cols-3">
         <div>
-          <h3 className="text-2xl text-gradient-gold font-display mb-3">Lumiā</h3>
+          <h3 className="text-2xl text-gradient-gold font-display mb-3">Keau-Nzi</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Objets sacrés pour aligner le corps, l'esprit et l'âme.
             Géométrie sacrée. Production éthique.
@@ -28,7 +28,7 @@ export function Footer() {
       </div>
       <div className="divider-gold opacity-40" />
       <div className="container-spirit py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Lumiā — Tous droits réservés. Fait avec intention.
+        © {new Date().getFullYear()} Keau-Nzi — Tous droits réservés. Fait avec intention.
       </div>
     </footer>
   );
