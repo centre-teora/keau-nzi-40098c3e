@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const links = [
   { to: "/", label: "Accueil" },
@@ -15,8 +16,14 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="container-spirit flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center gap-2 group">
-          <span className="text-2xl text-gradient-gold font-display tracking-wider">KEAU-NZI</span>
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src={logo}
+            alt="Keau-Nzi"
+            width={48}
+            height={48}
+            className="h-12 w-auto transition-transform duration-500 group-hover:scale-105"
+          />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
