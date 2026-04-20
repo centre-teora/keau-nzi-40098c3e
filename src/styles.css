@@ -187,4 +187,22 @@
   .animate-slow-spin {
     animation: slow-spin 60s linear infinite;
   }
+  @keyframes flower-vibrate {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+      filter: drop-shadow(0 0 20px color-mix(in oklab, var(--gold) 40%, transparent))
+              drop-shadow(0 0 40px color-mix(in oklab, var(--gold) 25%, transparent));
+      opacity: 0.55;
+    }
+    50% {
+      transform: scale(1.04) rotate(0.5deg);
+      filter: drop-shadow(0 0 35px color-mix(in oklab, var(--gold) 70%, transparent))
+              drop-shadow(0 0 70px color-mix(in oklab, var(--gold) 45%, transparent));
+      opacity: 0.8;
+    }
+  }
+  .animate-flower-vibrate {
+    animation: flower-vibrate 4s ease-in-out infinite;
+    transform-origin: center;
+  }
 }
