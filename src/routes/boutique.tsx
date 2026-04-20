@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { listShopProducts } from "@/integrations/printful/products.functions";
+import { listShopProducts, type ShopProduct } from "@/integrations/printful/products.functions";
 import { products as fallbackProducts } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -56,7 +56,7 @@ function ShopPage() {
 
         <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
           {hasPrintful
-            ? printfulProducts.map((p) => (
+            ? printfulProducts.map((p: ShopProduct) => (
                 <Link
                   key={p.id}
                   to="/produit/$slug"
