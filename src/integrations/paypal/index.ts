@@ -1,11 +1,9 @@
 /**
  * Module d'intégration PayPal
- * Export de tous les composants nécessaires
+ * Les opérations serveur sont dans paypal.functions.ts
  */
 
-export { PayPalClient, initPayPalClient, getPayPalClient } from './client';
 export type {
-  PayPalConfig,
   PayPalOrder,
   PayPalPurchaseUnit,
   PayPalItem,
@@ -14,4 +12,3 @@ export type {
   PayPalCapture,
   PayPalLink,
 } from './client';
-export * from './hooks';

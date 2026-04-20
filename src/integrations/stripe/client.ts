@@ -306,22 +306,6 @@ class StripeClient {
     });
   }
 
-  // ==================== WEBHOOKS ====================
-
-  /**
-   * Vérifier la signature d'un webhook
-   */
-  verifyWebhookSignature(
-    payload: string,
-    signature: string,
-    webhookSecret: string
-  ): boolean {
-    // Note: En production, utilisez la bibliothèque officielle Stripe
-    // pour une vérification cryptographique appropriée
-    console.warn('Webhook signature verification not implemented. Use Stripe SDK in production.');
-    return true;
-  }
-
   // ==================== HELPER METHODS ====================
 
   /**
