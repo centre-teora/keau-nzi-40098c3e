@@ -16,9 +16,7 @@ export function Header() {
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="container-spirit flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2 group">
-          <span className="text-2xl text-gradient-gold font-display tracking-wider">
-            Lumiā
-          </span>
+          <span className="text-2xl text-gradient-gold font-display tracking-wider">KEAU-NZI</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -34,11 +32,7 @@ export function Header() {
           ))}
         </nav>
 
-        <button
-          className="md:hidden text-gold p-2"
-          onClick={() => setOpen(!open)}
-          aria-label="Menu"
-        >
+        <button className="md:hidden text-gold p-2" onClick={() => setOpen(!open)} aria-label="Menu">
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
