@@ -39,7 +39,7 @@ export const Route = createRootRoute({
           "Tapis de yoga et serviettes premium imprimés Fleur de Vie base 12. Géométrie sacrée, production éthique, alignement intérieur.",
       },
       { name: "author", content: "Keau-Nzi" },
-      { property: "og:title", content: "Keau-Nzi — Géométrie sacrée pour votre pratique" },
+      { property: "og:title", content: "Keau-Nzi — Tapis & serviettes Fleur de Vie sacrée" },
       {
         property: "og:description",
         content:
@@ -47,6 +47,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Keau-Nzi — Tapis & serviettes Fleur de Vie sacrée" },
+      { name: "description", content: "Keau-Nzi: une boutique spirituelle moderne, axée sur la géométrie sacrée et les produits de bien-être." },
+      { property: "og:description", content: "Keau-Nzi: une boutique spirituelle moderne, axée sur la géométrie sacrée et les produits de bien-être." },
+      { name: "twitter:description", content: "Keau-Nzi: une boutique spirituelle moderne, axée sur la géométrie sacrée et les produits de bien-être." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d32dbb7b-6e6d-421e-ac7c-44f754809b18/id-preview-5e65c334--9eacd03e-fd2a-4d69-a2b8-fbf484b207c2.lovable.app-1776711374736.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d32dbb7b-6e6d-421e-ac7c-44f754809b18/id-preview-5e65c334--9eacd03e-fd2a-4d69-a2b8-fbf484b207c2.lovable.app-1776711374736.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
