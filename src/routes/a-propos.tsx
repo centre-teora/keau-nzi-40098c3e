@@ -31,11 +31,11 @@ function AboutPage() {
         <div className="rounded-lg overflow-hidden border border-border mb-12">
           <img
             src={meditationImg}
-            alt="Méditation devant une Fleur de Vie dorée"
+            alt="Homme antillais en méditation devant la Fleur de Vie base 12 dorée et vibrante"
             width={1024}
             height={1024}
             loading="lazy"
-            className="w-full h-auto"
+            className="w-full h-auto animate-flower-vibrate"
           />
         </div>
 
