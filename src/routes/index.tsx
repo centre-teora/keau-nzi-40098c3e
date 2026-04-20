@@ -25,15 +25,15 @@ function HomePage() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 -z-10 flex items-center justify-center">
           <img
             src={heroImg}
-            alt="Fleur de Vie dorée sur fond noir"
+            alt="Fleur de Vie dorée base 12"
             width={1920}
             height={1080}
-            className="w-full h-full object-cover opacity-60"
+            className="w-[60%] max-w-[520px] md:max-w-[640px] h-auto object-contain opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/50 to-background" />
         </div>
 
         <div className="container-spirit min-h-[88vh] flex flex-col items-center justify-center text-center py-20">
