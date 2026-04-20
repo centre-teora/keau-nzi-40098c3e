@@ -36,7 +36,7 @@ function HomePage() {
             alt="Fleur de Vie dorée base 12"
             width={1920}
             height={1080}
-            className="w-[60%] max-w-[520px] md:max-w-[640px] h-auto object-contain opacity-50"
+            className="w-[40%] max-w-[320px] md:max-w-[400px] h-auto object-contain opacity-60 animate-flower-vibrate"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/50 to-background" />
         </div>
