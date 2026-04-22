@@ -43,9 +43,19 @@ function ProductPage() {
   const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    if (source === "local" && "priceId" in product) {
-      addItem(product as any, (product as any).priceId);
-    }
+    const p = product as any;
+    const priceId = p.priceId || p.slug || "default";
+    addItem({
+      slug: p.slug,
+      name: p.name,
+      tagline: p.tagline || p.name,
+      price: typeof p.price === "number" ? p.price : parseFloat(p.price) || 0,
+      currency: p.currency || "EUR",
+      image: p.image || p.thumbnail || "",
+      description: p.description || "",
+      features: p.features || [],
+      priceId,
+    }, priceId);
     toast("Ajouté au panier", {
       description: `${product.name} a été ajouté à votre panier.`,
     });
