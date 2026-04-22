@@ -9,23 +9,24 @@ const supabase = createClient(
 
 const PRINTFUL_API_BASE = "https://api.printful.com";
 
-async function createPrintfulOrder(session: any) {
+async function createPrintfulOrder(session: any): Promise<number | null> {
   const apiKey = Deno.env.get("PRINTFUL_API_KEY");
   if (!apiKey) {
     console.log("PRINTFUL_API_KEY not set — skipping fulfillment");
-    return;
+    return null;
   }
 
   const shipping = session.shipping_details;
   if (!shipping?.address) {
     console.log("No shipping address — skipping Printful order");
-    return;
+    return null;
   }
 
   const items = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
-  if (items.length === 0) {
-    console.log("No items in metadata — skipping Printful order");
-    return;
+  const printfulItems = items.filter((i: any) => i.syncVariantId);
+  if (printfulItems.length === 0) {
+    console.log("No Printful items in metadata — skipping Printful order");
+    return null;
   }
 
   const orderData = {
@@ -40,7 +41,7 @@ async function createPrintfulOrder(session: any) {
       zip: shipping.address.postal_code,
       email: session.customer_details?.email,
     },
-    items: items.map((item: any) => ({
+    items: printfulItems.map((item: any) => ({
       sync_variant_id: item.syncVariantId,
       quantity: item.quantity,
     })),
@@ -58,11 +59,14 @@ async function createPrintfulOrder(session: any) {
     const data = await res.json();
     if (!res.ok) {
       console.error("Printful order error:", data);
+      return null;
     } else {
       console.log("Printful order created:", data.result?.id);
+      return data.result?.id || null;
     }
   } catch (e) {
     console.error("Printful order failed:", e);
+    return null;
   }
 }
 
@@ -101,7 +105,7 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
 
   const userId = session.metadata?.userId || null;
 
-  await supabase.from("orders").insert({
+  const { data: orderRow, error: insertError } = await supabase.from("orders").insert({
     stripe_session_id: session.id,
     stripe_customer_id: session.customer,
     customer_email: session.customer_details?.email,
@@ -113,8 +117,20 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     metadata: session.metadata || {},
     environment: env,
     user_id: userId,
-  });
+  }).select("id").single();
+
+  if (insertError) {
+    console.error("Failed to insert order:", insertError);
+  }
 
   // Trigger Printful fulfillment
-  await createPrintfulOrder(session);
+  const printfulOrderId = await createPrintfulOrder(session);
+
+  // Save Printful order ID back to the order row
+  if (printfulOrderId && orderRow?.id) {
+    await supabase.from("orders").update({
+      printful_order_id: String(printfulOrderId),
+      printful_status: "pending",
+    }).eq("id", orderRow.id);
+  }
 }
