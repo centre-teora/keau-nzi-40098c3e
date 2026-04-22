@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, type StripeEnv } from "@/lib/stripe.server";
+import { productCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/api/public/create-checkout")({
   server: {
@@ -27,12 +28,13 @@ export const Route = createFileRoute("/api/public/create-checkout")({
           }
 
           for (const item of items) {
-            if (item.amountInCents && item.productName) {
+            if (item.slug && productCatalog[item.slug]) {
+              const catalogProduct = productCatalog[item.slug];
               lineItems.push({
                 price_data: {
-                  currency: (item.currency || "eur").toLowerCase(),
-                  product_data: { name: item.productName },
-                  unit_amount: Math.round(item.amountInCents),
+                  currency: catalogProduct.currency,
+                  product_data: { name: catalogProduct.name },
+                  unit_amount: catalogProduct.priceInCents,
                 },
                 quantity: item.quantity || 1,
               });
@@ -84,7 +86,7 @@ export const Route = createFileRoute("/api/public/create-checkout")({
         } catch (error: any) {
           console.error("create-checkout error:", error);
           return Response.json(
-            { error: error.message },
+            { error: "Unable to create checkout session. Please try again." },
             { status: 500 }
           );
         }

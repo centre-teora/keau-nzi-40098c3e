@@ -15,15 +15,21 @@ serve(async (req) => {
 
     let lineItems: any[] = [];
 
+    const productCatalog: Record<string, { name: string; priceInCents: number; currency: string; priceId: string }> = {
+      "tapis-fleur-de-vie": { name: "Tapis Fleur de Vie — Base 12", priceInCents: 8900, currency: "eur", priceId: "tapis_price" },
+      "serviette-fleur-de-vie": { name: "Serviette Fleur de Vie — Base 12", priceInCents: 3900, currency: "eur", priceId: "serviette_price" },
+    };
+
     // Support new multi-item format
     if (items && Array.isArray(items)) {
       for (const item of items) {
-        if (item.amountInCents && item.productName) {
+        if (item.slug && productCatalog[item.slug]) {
+          const catalogProduct = productCatalog[item.slug];
           lineItems.push({
             price_data: {
-              currency: (item.currency || 'eur').toLowerCase(),
-              product_data: { name: item.productName },
-              unit_amount: Math.round(item.amountInCents),
+              currency: catalogProduct.currency,
+              product_data: { name: catalogProduct.name },
+              unit_amount: catalogProduct.priceInCents,
             },
             quantity: item.quantity || 1,
           });
@@ -38,16 +44,6 @@ serve(async (req) => {
           lineItems.push({ price: prices.data[0].id, quantity: item.quantity || 1 });
         }
       }
-    } else if (amountInCents && productName) {
-      // Legacy single-item support
-      lineItems = [{
-        price_data: {
-          currency: (currency || 'eur').toLowerCase(),
-          product_data: { name: productName },
-          unit_amount: Math.round(amountInCents),
-        },
-        quantity: quantity || 1,
-      }];
     } else if (priceId) {
       const prices = await stripe.prices.list({ lookup_keys: [priceId] });
       if (!prices.data.length) {
@@ -77,7 +73,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("create-checkout error:", error);
+    return new Response(JSON.stringify({ error: "Unable to create checkout session. Please try again." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
