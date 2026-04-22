@@ -1,6 +1,5 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   priceId: string;
@@ -14,8 +13,10 @@ interface Props {
 
 export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, returnUrl, productName, amountInCents, currency }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
-    const { data, error } = await supabase.functions.invoke("create-checkout", {
-      body: {
+    const res = await fetch("/api/public/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         priceId,
         quantity,
         customerEmail,
@@ -24,10 +25,11 @@ export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, r
         productName,
         amountInCents,
         currency,
-      },
+      }),
     });
-    if (error || !data?.clientSecret) {
-      throw new Error(error?.message || "Échec de la création de la session de paiement");
+    const data = await res.json();
+    if (!res.ok || !data?.clientSecret) {
+      throw new Error(data?.error || "Échec de la création de la session de paiement");
     }
     return data.clientSecret;
   };

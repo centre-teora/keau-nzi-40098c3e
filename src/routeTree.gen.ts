@@ -20,6 +20,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
+import { Route as ApiPublicCreateCheckoutRouteImport } from './routes/api/public/create-checkout'
 
 const PolitiqueDeConfidentialiteRoute =
   PolitiqueDeConfidentialiteRouteImport.update({
@@ -77,6 +78,11 @@ const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
   path: '/commande/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCreateCheckoutRoute = ApiPublicCreateCheckoutRouteImport.update({
+  id: '/api/public/create-checkout',
+  path: '/api/public/create-checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
+  '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/politique-de-confidentialite'
     | '/commande/confirmation'
     | '/produit/$slug'
+    | '/api/public/create-checkout'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/politique-de-confidentialite'
     | '/commande/confirmation'
     | '/produit/$slug'
+    | '/api/public/create-checkout'
   id:
     | '__root__'
     | '/'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/politique-de-confidentialite'
     | '/commande/confirmation'
     | '/produit/$slug'
+    | '/api/public/create-checkout'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -172,6 +184,7 @@ export interface RootRouteChildren {
   PolitiqueDeConfidentialiteRoute: typeof PolitiqueDeConfidentialiteRoute
   CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   ProduitSlugRoute: typeof ProduitSlugRoute
+  ApiPublicCreateCheckoutRoute: typeof ApiPublicCreateCheckoutRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandeConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/create-checkout': {
+      id: '/api/public/create-checkout'
+      path: '/api/public/create-checkout'
+      fullPath: '/api/public/create-checkout'
+      preLoaderRoute: typeof ApiPublicCreateCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -268,7 +288,17 @@ const rootRouteChildren: RootRouteChildren = {
   PolitiqueDeConfidentialiteRoute: PolitiqueDeConfidentialiteRoute,
   CommandeConfirmationRoute: CommandeConfirmationRoute,
   ProduitSlugRoute: ProduitSlugRoute,
+  ApiPublicCreateCheckoutRoute: ApiPublicCreateCheckoutRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
