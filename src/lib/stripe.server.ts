@@ -23,7 +23,7 @@ export function createStripeClient(env: StripeEnv): Stripe {
 
   return new Stripe(connectionApiKey, {
     httpClient: Stripe.createFetchHttpClient(
-      (url: string | URL, init?: RequestInit) => {
+      (url: any, init?: any) => {
         const gatewayUrl = url
           .toString()
           .replace("https://api.stripe.com", GATEWAY_STRIPE_BASE);
