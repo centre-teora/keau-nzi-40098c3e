@@ -4,9 +4,7 @@ import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 export interface CheckoutItem {
   priceId: string;
   quantity: number;
-  productName?: string;
-  amountInCents?: number;
-  currency?: string;
+  slug?: string;
 }
 
 interface Props {
