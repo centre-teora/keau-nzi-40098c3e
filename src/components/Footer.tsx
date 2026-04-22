@@ -25,10 +25,20 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">contact@lumia-shop.com</p>
           <p className="text-sm text-muted-foreground mt-2">Production & livraison via Printful</p>
         </div>
+        <div>
+          <h4 className="text-sm uppercase tracking-widest text-gold mb-4">Informations</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/mentions-legales" className="hover:text-gold">Mentions légales</Link></li>
+            <li><Link to="/cgv" className="hover:text-gold">CGV</Link></li>
+            <li><Link to="/politique-de-confidentialite" className="hover:text-gold">Confidentialité</Link></li>
+          </ul>
+        </div>
       </div>
       <div className="divider-gold opacity-40" />
-      <div className="container-spirit py-6 text-center text-xs text-muted-foreground">
+      <div className="container-spirit py-6 text-center text-xs text-muted-foreground flex flex-wrap justify-center gap-x-4 gap-y-1">
+        <span>
         © {new Date().getFullYear()} Keau-Nzi — Tous droits réservés. Fait avec intention.
+        </span>
       </div>
     </footer>
   );
