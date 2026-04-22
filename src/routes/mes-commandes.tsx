@@ -109,9 +109,16 @@ function OrdersPage() {
                     })}
                   </span>
                   <span className={`text-xs uppercase tracking-widest px-2 py-1 rounded-full ${
-                    order.status === "paid" ? "bg-green-500/10 text-green-500" : "bg-gold/10 text-gold"
+                    order.status === "paid" ? "bg-green-500/10 text-green-500" :
+                    order.status === "shipped" ? "bg-blue-500/10 text-blue-500" :
+                    order.status === "canceled" || order.status === "failed" ? "bg-red-500/10 text-red-500" :
+                    "bg-gold/10 text-gold"
                   }`}>
-                    {order.status === "paid" ? "Payée" : order.status}
+                    {order.status === "paid" ? "Payée" :
+                     order.status === "shipped" ? "Expédiée" :
+                     order.status === "canceled" ? "Annulée" :
+                     order.status === "failed" ? "Échouée" :
+                     order.status}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
