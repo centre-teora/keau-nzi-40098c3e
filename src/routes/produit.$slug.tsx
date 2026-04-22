@@ -20,10 +20,10 @@ export const Route = createFileRoute("/produit/$slug")({
     meta: loaderData
       ? [
           { title: `${loaderData.product.name} — Keau-Nzi` },
-          { name: "description", content: loaderData.product.description.slice(0, 160) },
+          { name: "description", content: (loaderData.product.description || loaderData.product.name).slice(0, 160) },
           { property: "og:title", content: loaderData.product.name },
-          { property: "og:description", content: loaderData.product.tagline },
-          { property: "og:image", content: loaderData.product.image },
+          { property: "og:description", content: loaderData.source === "local" ? (loaderData.product as any).tagline : loaderData.product.name },
+          ...(loaderData.source === "local" ? [{ property: "og:image", content: (loaderData.product as any).image }] : [{ property: "og:image", content: (loaderData.product as any).thumbnail }]),
         ]
       : [],
   }),
@@ -57,7 +57,6 @@ function ProductPage() {
         {/* IMAGE */}
         <div className="rounded-lg overflow-hidden border border-border bg-card">
           <img
-            src={product.image}
             src={source === "local" ? (product as any).image : (product as any).thumbnail}
             alt={product.name}
             width={1024}
