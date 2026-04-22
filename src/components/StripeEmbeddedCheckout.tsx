@@ -1,4 +1,6 @@
+import { useCallback, useMemo } from "react";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import { supabase } from "@/integrations/supabase/client";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 
 export interface CheckoutItem {
@@ -18,28 +20,37 @@ interface Props {
 }
 
 export function StripeEmbeddedCheckoutForm({ items, customerEmail, returnUrl, metadata }: Props) {
-  const fetchClientSecret = async (): Promise<string> => {
-    const res = await fetch("/api/public/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items,
+  const serializedItems = useMemo(() => JSON.stringify(items), [items]);
+  const serializedMetadata = useMemo(() => JSON.stringify(metadata ?? {}), [metadata]);
+
+  const fetchClientSecret = useCallback(async (): Promise<string> => {
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: {
+        items: JSON.parse(serializedItems),
         customerEmail,
         returnUrl,
         environment: getStripeEnvironment(),
-        metadata,
-      }),
+        metadata: JSON.parse(serializedMetadata),
+      },
     });
-    const data = await res.json();
-    if (!res.ok || !data?.clientSecret) {
-      throw new Error(data?.error || "Échec de la création de la session de paiement");
+
+    if (error || !data?.clientSecret) {
+      throw new Error(
+        data?.error || error?.message || "Échec de la création de la session de paiement"
+      );
     }
+
     return data.clientSecret;
-  };
+  }, [customerEmail, returnUrl, serializedItems, serializedMetadata]);
+
+  const checkoutKey = useMemo(
+    () => `${customerEmail ?? "guest"}:${returnUrl ?? ""}:${serializedItems}:${serializedMetadata}`,
+    [customerEmail, returnUrl, serializedItems, serializedMetadata]
+  );
 
   return (
     <div id="checkout">
-      <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret }}>
+      <EmbeddedCheckoutProvider key={checkoutKey} stripe={getStripe()} options={{ fetchClientSecret }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>
