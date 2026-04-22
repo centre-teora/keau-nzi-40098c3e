@@ -8,15 +8,38 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId, quantity, customerEmail, returnUrl, environment, metadata, productName, amountInCents, currency } = await req.json();
+    const { items, priceId, quantity, customerEmail, returnUrl, environment, metadata, productName, amountInCents, currency } = await req.json();
 
     const env = (environment || 'sandbox') as StripeEnv;
     const stripe = createStripeClient(env);
 
-    let lineItems;
+    let lineItems: any[] = [];
 
-    // If amountInCents is provided, use dynamic price_data (for Printful products etc.)
-    if (amountInCents && productName) {
+    // Support new multi-item format
+    if (items && Array.isArray(items)) {
+      for (const item of items) {
+        if (item.amountInCents && item.productName) {
+          lineItems.push({
+            price_data: {
+              currency: (item.currency || 'eur').toLowerCase(),
+              product_data: { name: item.productName },
+              unit_amount: Math.round(item.amountInCents),
+            },
+            quantity: item.quantity || 1,
+          });
+        } else if (item.priceId && typeof item.priceId === 'string' && /^[a-zA-Z0-9_-]+$/.test(item.priceId)) {
+          const prices = await stripe.prices.list({ lookup_keys: [item.priceId] });
+          if (!prices.data.length) {
+            return new Response(JSON.stringify({ error: `Price not found: ${item.priceId}` }), {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          lineItems.push({ price: prices.data[0].id, quantity: item.quantity || 1 });
+        }
+      }
+    } else if (amountInCents && productName) {
+      // Legacy single-item support
       lineItems = [{
         price_data: {
           currency: (currency || 'eur').toLowerCase(),
@@ -25,18 +48,16 @@ serve(async (req) => {
         },
         quantity: quantity || 1,
       }];
-    } else if (priceId && typeof priceId === 'string' && /^[a-zA-Z0-9_-]+$/.test(priceId)) {
-      // Resolve lookup key to Stripe price
+    } else if (priceId) {
       const prices = await stripe.prices.list({ lookup_keys: [priceId] });
       if (!prices.data.length) {
-        return new Response(JSON.stringify({ error: "Price not found" }), {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(JSON.stringify({ error: "Price not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       lineItems = [{ price: prices.data[0].id, quantity: quantity || 1 }];
-    } else {
-      return new Response(JSON.stringify({ error: "Invalid request: provide priceId or amountInCents+productName" }), {
+    }
+
+    if (lineItems.length === 0) {
+      return new Response(JSON.stringify({ error: "No valid items provided" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
