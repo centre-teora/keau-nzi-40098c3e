@@ -1,30 +1,32 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 
-interface Props {
+export interface CheckoutItem {
   priceId: string;
-  quantity?: number;
-  customerEmail?: string;
-  returnUrl?: string;
+  quantity: number;
   productName?: string;
   amountInCents?: number;
   currency?: string;
 }
 
-export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, returnUrl, productName, amountInCents, currency }: Props) {
+interface Props {
+  items: CheckoutItem[];
+  customerEmail?: string;
+  returnUrl?: string;
+  metadata?: Record<string, string>;
+}
+
+export function StripeEmbeddedCheckoutForm({ items, customerEmail, returnUrl, metadata }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const res = await fetch("/api/public/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        priceId,
-        quantity,
+        items,
         customerEmail,
         returnUrl,
         environment: getStripeEnvironment(),
-        productName,
-        amountInCents,
-        currency,
+        metadata,
       }),
     });
     const data = await res.json();

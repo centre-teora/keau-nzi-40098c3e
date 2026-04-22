@@ -56,6 +56,7 @@ export type Database = {
           stripe_customer_id: string | null
           stripe_session_id: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           amount_total: number
@@ -71,6 +72,7 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_session_id: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           amount_total?: number
@@ -86,6 +88,34 @@ export type Database = {
           stripe_customer_id?: string | null
           stripe_session_id?: string
           updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
