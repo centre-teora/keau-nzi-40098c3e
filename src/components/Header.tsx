@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import { useCart } from "@/lib/cart";
 import logo from "@/assets/logo.png";
 
 const links = [
@@ -37,11 +38,15 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          <CartIcon />
         </nav>
 
-        <button className="md:hidden text-gold p-2" onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <CartIcon />
+          <button className="text-gold p-2" onClick={() => setOpen(!open)} aria-label="Menu">
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -62,5 +67,19 @@ export function Header() {
         </nav>
       )}
     </header>
+  );
+}
+
+function CartIcon() {
+  const { totalItems } = useCart();
+  return (
+    <Link to="/panier" className="relative p-2 text-muted-foreground hover:text-gold transition-colors">
+      <ShoppingBag size={20} />
+      {totalItems > 0 && (
+        <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-gold text-primary-foreground text-xs rounded-full flex items-center justify-center font-medium">
+          {totalItems}
+        </span>
+      )}
+    </Link>
   );
 }

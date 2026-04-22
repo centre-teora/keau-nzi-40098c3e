@@ -11,6 +11,7 @@ export type Product = {
   description: string;
   features: string[];
   printfulId?: string;
+  priceId: string;
 };
 
 export const products: Product[] = [
@@ -30,6 +31,7 @@ export const products: Product[] = [
       "Sangle de transport offerte",
       "Production éthique via Printful",
     ],
+    priceId: "tapis_price",
   },
   {
     slug: "serviette-fleur-de-vie",
@@ -47,6 +49,7 @@ export const products: Product[] = [
       "Lavable en machine 30°",
       "Production éthique via Printful",
     ],
+    priceId: "serviette_price",
   },
 ];
 

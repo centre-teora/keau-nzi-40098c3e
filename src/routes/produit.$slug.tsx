@@ -2,7 +2,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getProduct } from "@/lib/products";
 import { ReviewList } from "@/components/ReviewList";
 import { toast } from "sonner";
-import { Check, Star, Truck, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Star, Truck, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
+import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/produit/$slug")({
   loader: ({ params }) => {
@@ -34,10 +35,12 @@ export const Route = createFileRoute("/produit/$slug")({
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
+  const { addItem } = useCart();
 
-  const handleBuy = () => {
-    toast("Paiement bientôt disponible", {
-      description: "Stripe & PayPal seront activés très prochainement. Merci de votre patience.",
+  const handleAddToCart = () => {
+    addItem(product, product.priceId);
+    toast("Ajouté au panier", {
+      description: `${product.name} a été ajouté à votre panier.`,
     });
   };
 
@@ -75,10 +78,11 @@ function ProductPage() {
           <p className="mt-6 text-muted-foreground leading-relaxed">{product.description}</p>
 
           <button
-            onClick={handleBuy}
-            className="mt-8 w-full inline-flex items-center justify-center rounded-md bg-gold px-8 py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground hover:shadow-gold transition-all"
+            onClick={handleAddToCart}
+            className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-md bg-gold px-8 py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground hover:shadow-gold transition-all"
           >
-            Acheter maintenant
+            <ShoppingBag size={18} />
+            Ajouter au panier
           </button>
 
           <div className="mt-6 grid grid-cols-3 gap-3 text-center">
