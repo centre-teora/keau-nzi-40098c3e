@@ -33,6 +33,15 @@ serve(async (req) => {
             },
             quantity: item.quantity || 1,
           });
+        } else if (item.amountInCents && item.productName) {
+          lineItems.push({
+            price_data: {
+              currency: item.currency || "eur",
+              product_data: { name: item.productName },
+              unit_amount: item.amountInCents,
+            },
+            quantity: item.quantity || 1,
+          });
         } else if (item.priceId && typeof item.priceId === 'string' && /^[a-zA-Z0-9_-]+$/.test(item.priceId)) {
           const prices = await stripe.prices.list({ lookup_keys: [item.priceId] });
           if (!prices.data.length) {
