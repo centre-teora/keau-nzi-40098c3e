@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/logo.png";
 
 const links = [
@@ -13,6 +14,7 @@ const links = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border">
@@ -38,10 +40,45 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          {user ? (
+            <>
+              <Link
+                to="/mes-commandes"
+                className="text-sm tracking-wide text-muted-foreground hover:text-gold transition-colors"
+                activeProps={{ className: "text-gold" }}
+              >
+                Mes commandes
+              </Link>
+              <button
+                onClick={signOut}
+                className="text-muted-foreground hover:text-gold transition-colors"
+                title="Se déconnecter"
+              >
+                <LogOut size={18} />
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/connexion"
+              className="text-muted-foreground hover:text-gold transition-colors"
+              title="Se connecter"
+            >
+              <User size={20} />
+            </Link>
+          )}
           <CartIcon />
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
+          {user ? (
+            <button onClick={signOut} className="p-2 text-muted-foreground hover:text-gold transition-colors">
+              <LogOut size={18} />
+            </button>
+          ) : (
+            <Link to="/connexion" className="p-2 text-muted-foreground hover:text-gold transition-colors">
+              <User size={18} />
+            </Link>
+          )}
           <CartIcon />
           <button className="text-gold p-2" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -63,6 +100,16 @@ export function Header() {
                 {l.label}
               </Link>
             ))}
+            {user && (
+              <Link
+                to="/mes-commandes"
+                onClick={() => setOpen(false)}
+                className="text-base text-muted-foreground hover:text-gold"
+                activeProps={{ className: "text-gold" }}
+              >
+                Mes commandes
+              </Link>
+            )}
           </div>
         </nav>
       )}
