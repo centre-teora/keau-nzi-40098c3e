@@ -1,24 +1,29 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getProduct } from "@/lib/products";
+import { getShopProduct } from "@/integrations/printful/products.functions";
 import { ReviewList } from "@/components/ReviewList";
 import { toast } from "sonner";
 import { Check, Star, Truck, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
 import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/produit/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const product = getProduct(params.slug);
-    if (!product) throw notFound();
-    return { product };
+    if (product) return { product, source: "local" as const };
+
+    // Try Printful
+    const { product: pfProduct, error } = await getShopProduct({ data: { slug: params.slug } });
+    if (!pfProduct) throw notFound();
+    return { product: pfProduct, source: "printful" as const };
   },
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
           { title: `${loaderData.product.name} — Keau-Nzi` },
-          { name: "description", content: loaderData.product.description.slice(0, 160) },
+          { name: "description", content: (loaderData.product.description || loaderData.product.name).slice(0, 160) },
           { property: "og:title", content: loaderData.product.name },
-          { property: "og:description", content: loaderData.product.tagline },
-          { property: "og:image", content: loaderData.product.image },
+          { property: "og:description", content: loaderData.source === "local" ? (loaderData.product as any).tagline : loaderData.product.name },
+          ...(loaderData.source === "local" ? [{ property: "og:image", content: (loaderData.product as any).image }] : [{ property: "og:image", content: (loaderData.product as any).thumbnail }]),
         ]
       : [],
   }),
@@ -34,11 +39,13 @@ export const Route = createFileRoute("/produit/$slug")({
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
+  const { product, source } = Route.useLoaderData();
   const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    addItem(product, product.priceId);
+    if (source === "local" && "priceId" in product) {
+      addItem(product as any, (product as any).priceId);
+    }
     toast("Ajouté au panier", {
       description: `${product.name} a été ajouté à votre panier.`,
     });
@@ -50,7 +57,7 @@ function ProductPage() {
         {/* IMAGE */}
         <div className="rounded-lg overflow-hidden border border-border bg-card">
           <img
-            src={product.image}
+            src={source === "local" ? (product as any).image : (product as any).thumbnail}
             alt={product.name}
             width={1024}
             height={1024}
@@ -60,7 +67,9 @@ function ProductPage() {
 
         {/* INFOS */}
         <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-gold mb-3">{product.tagline}</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-gold mb-3">
+            {source === "local" ? (product as any).tagline : "Produit Printful"}
+          </p>
           <h1 className="text-3xl md:text-4xl font-display leading-tight">{product.name}</h1>
 
           <div className="flex items-center gap-2 mt-4">
@@ -72,10 +81,14 @@ function ProductPage() {
             <span className="text-sm text-muted-foreground">Avis vérifiés</span>
           </div>
 
-          <p className="text-3xl font-display text-gold mt-6">{product.price} €</p>
+          <p className="text-3xl font-display text-gold mt-6">
+            {typeof product.price === "number" ? product.price.toFixed(2) : product.price} {(product as any).currency === "EUR" ? "€" : (product as any).currency || "€"}
+          </p>
           <p className="text-xs text-muted-foreground">TVA incluse · Livraison estimée 5–10 jours</p>
 
-          <p className="mt-6 text-muted-foreground leading-relaxed">{product.description}</p>
+          <p className="mt-6 text-muted-foreground leading-relaxed">
+            {source === "local" ? (product as any).description : (product as any).description || product.name}
+          </p>
 
           <button
             onClick={handleAddToCart}
@@ -100,14 +113,30 @@ function ProductPage() {
             </div>
           </div>
 
-          <ul className="mt-8 space-y-3">
-            {product.features.map((f: string) => (
-              <li key={f} className="flex gap-3 text-sm text-muted-foreground">
-                <Check size={18} className="text-gold flex-shrink-0 mt-0.5" />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
+          {source === "local" && (product as any).features && (
+            <ul className="mt-8 space-y-3">
+              {(product as any).features.map((f: string) => (
+                <li key={f} className="flex gap-3 text-sm text-muted-foreground">
+                  <Check size={18} className="text-gold flex-shrink-0 mt-0.5" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {source === "printful" && (product as any).variants && (product as any).variants.length > 1 && (
+            <div className="mt-8">
+              <p className="text-sm font-medium text-foreground mb-3">Variantes disponibles</p>
+              <ul className="space-y-2">
+                {(product as any).variants.map((v: any) => (
+                  <li key={v.id} className="flex justify-between text-sm text-muted-foreground">
+                    <span>{v.name}</span>
+                    <span className="text-gold">{v.price.toFixed(2)} {v.currency === "EUR" ? "€" : v.currency}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
 
