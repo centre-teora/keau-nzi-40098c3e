@@ -61,6 +61,15 @@ export const Route = createFileRoute("/api/public/create-checkout")({
 
           const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/$/, "") || "";
 
+          // Build items metadata for the webhook (Printful fulfillment)
+          const itemsMeta = items.map((item: any) => {
+            if (item.slug && productCatalog[item.slug]) {
+              const cat = productCatalog[item.slug];
+              return { slug: item.slug, quantity: item.quantity || 1, syncVariantId: cat.syncVariantId || null };
+            }
+            return { priceId: item.priceId, quantity: item.quantity || 1 };
+          });
+
           const session = await stripe.checkout.sessions.create({
             line_items: lineItems,
             mode: "payment",
@@ -69,7 +78,10 @@ export const Route = createFileRoute("/api/public/create-checkout")({
               returnUrl ||
               `${origin}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
             ...(customerEmail && { customer_email: customerEmail }),
-            ...(metadata && { metadata }),
+            metadata: {
+              ...(metadata || {}),
+              items: JSON.stringify(itemsMeta),
+            },
             ...(metadata?.userId && {
               payment_intent_data: { metadata: { userId: metadata.userId } },
             }),
