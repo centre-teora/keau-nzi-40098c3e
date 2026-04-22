@@ -40,6 +40,9 @@ function CheckoutPage() {
   // Use first item for checkout (Stripe embedded handles one price at a time)
   const firstItem = items[0];
 
+  // Determine if we need dynamic pricing (no Stripe lookup key)
+  const isLocalProduct = firstItem.priceId === "tapis_price" || firstItem.priceId === "serviette_price";
+
   return (
     <section className="py-8 md:py-16">
       <PaymentTestModeBanner />
@@ -54,6 +57,11 @@ function CheckoutPage() {
             priceId={firstItem.priceId}
             quantity={firstItem.quantity}
             returnUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`}
+            {...(!isLocalProduct && {
+              productName: firstItem.product.name,
+              amountInCents: Math.round(firstItem.product.price * 100),
+              currency: firstItem.product.currency || "EUR",
+            })}
           />
         </div>
 

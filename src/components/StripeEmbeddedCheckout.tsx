@@ -7,9 +7,12 @@ interface Props {
   quantity?: number;
   customerEmail?: string;
   returnUrl?: string;
+  productName?: string;
+  amountInCents?: number;
+  currency?: string;
 }
 
-export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, returnUrl }: Props) {
+export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, returnUrl, productName, amountInCents, currency }: Props) {
   const fetchClientSecret = async (): Promise<string> => {
     const { data, error } = await supabase.functions.invoke("create-checkout", {
       body: {
@@ -18,6 +21,9 @@ export function StripeEmbeddedCheckoutForm({ priceId, quantity, customerEmail, r
         customerEmail,
         returnUrl,
         environment: getStripeEnvironment(),
+        productName,
+        amountInCents,
+        currency,
       },
     });
     if (error || !data?.clientSecret) {
