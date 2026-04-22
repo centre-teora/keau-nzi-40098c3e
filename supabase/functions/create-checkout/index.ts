@@ -15,9 +15,9 @@ serve(async (req) => {
 
     let lineItems: any[] = [];
 
-    const productCatalog: Record<string, { name: string; priceInCents: number; currency: string; priceId: string }> = {
-      "tapis-fleur-de-vie": { name: "Tapis Fleur de Vie — Base 12", priceInCents: 8900, currency: "eur", priceId: "tapis_price" },
-      "serviette-fleur-de-vie": { name: "Serviette Fleur de Vie — Base 12", priceInCents: 3900, currency: "eur", priceId: "serviette_price" },
+    const productCatalog: Record<string, { name: string; priceInCents: number; currency: string; priceId: string; syncVariantId?: number }> = {
+      "tapis-fleur-de-vie": { name: "Tapis Fleur de Vie — Base 12", priceInCents: 8900, currency: "eur", priceId: "tapis_price", syncVariantId: undefined },
+      "serviette-fleur-de-vie": { name: "Serviette Fleur de Vie — Base 12", priceInCents: 3900, currency: "eur", priceId: "serviette_price", syncVariantId: undefined },
     };
 
     // Support new multi-item format
@@ -59,13 +59,25 @@ serve(async (req) => {
       });
     }
 
+    // Build items metadata for webhook (Printful fulfillment)
+    const itemsMeta = (items && Array.isArray(items)) ? items.map((item: any) => {
+      if (item.slug && productCatalog[item.slug]) {
+        const cat = productCatalog[item.slug];
+        return { slug: item.slug, quantity: item.quantity || 1, syncVariantId: cat.syncVariantId || null };
+      }
+      return { priceId: item.priceId, quantity: item.quantity || 1 };
+    }) : [];
+
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
       mode: "payment",
       ui_mode: "embedded_page",
       return_url: returnUrl || `${req.headers.get("origin")}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
       ...(customerEmail && { customer_email: customerEmail }),
-      ...(metadata && { metadata }),
+      metadata: {
+        ...(metadata || {}),
+        items: JSON.stringify(itemsMeta),
+      },
       shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'CA', 'DE', 'ES', 'IT', 'PT', 'NL', 'GB'] },
     });
 

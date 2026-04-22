@@ -51,10 +51,14 @@ export type Database = {
           environment: string
           id: string
           metadata: Json | null
+          printful_order_id: string | null
+          printful_status: string | null
           shipping_address: Json | null
           status: string
           stripe_customer_id: string | null
           stripe_session_id: string
+          tracking_number: string | null
+          tracking_url: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -67,10 +71,14 @@ export type Database = {
           environment?: string
           id?: string
           metadata?: Json | null
+          printful_order_id?: string | null
+          printful_status?: string | null
           shipping_address?: Json | null
           status?: string
           stripe_customer_id?: string | null
           stripe_session_id: string
+          tracking_number?: string | null
+          tracking_url?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -83,10 +91,14 @@ export type Database = {
           environment?: string
           id?: string
           metadata?: Json | null
+          printful_order_id?: string | null
+          printful_status?: string | null
           shipping_address?: Json | null
           status?: string
           stripe_customer_id?: string | null
           stripe_session_id?: string
+          tracking_number?: string | null
+          tracking_url?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
