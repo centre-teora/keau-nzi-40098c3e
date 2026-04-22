@@ -1,61 +1,60 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, type StripeEnv } from "@/lib/stripe.server";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
-
 export const Route = createFileRoute("/api/public/create-checkout")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
       POST: async ({ request }) => {
         try {
           const {
-            priceId,
-            quantity,
+            items,
             customerEmail,
             returnUrl,
             environment,
             metadata,
-            productName,
-            amountInCents,
-            currency,
           } = await request.json();
 
           const env = (environment || "sandbox") as StripeEnv;
           const stripe = createStripeClient(env);
 
-          let lineItems: any[];
+          const lineItems: any[] = [];
 
-          if (amountInCents && productName) {
-            lineItems = [
-              {
-                price_data: {
-                  currency: (currency || "eur").toLowerCase(),
-                  product_data: { name: productName },
-                  unit_amount: Math.round(amountInCents),
-                },
-                quantity: quantity || 1,
-              },
-            ];
-          } else if (
-            priceId &&
-            typeof priceId === "string" &&
-            /^[a-zA-Z0-9_-]+$/.test(priceId)
-          ) {
-            const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-            if (!prices.data.length) {
-              return Response.json({ error: "Price not found" }, { status: 404, headers: corsHeaders });
-            }
-            lineItems = [{ price: prices.data[0].id, quantity: quantity || 1 }];
-          } else {
+          if (!items || !Array.isArray(items) || items.length === 0) {
             return Response.json(
-              { error: "Invalid request: provide priceId or amountInCents+productName" },
-              { status: 400, headers: corsHeaders }
+              { error: "Invalid request: provide items array" },
+              { status: 400 }
             );
+          }
+
+          for (const item of items) {
+            if (item.amountInCents && item.productName) {
+              lineItems.push({
+                price_data: {
+                  currency: (item.currency || "eur").toLowerCase(),
+                  product_data: { name: item.productName },
+                  unit_amount: Math.round(item.amountInCents),
+                },
+                quantity: item.quantity || 1,
+              });
+            } else if (
+              item.priceId &&
+              typeof item.priceId === "string" &&
+              /^[a-zA-Z0-9_-]+$/.test(item.priceId)
+            ) {
+              const prices = await stripe.prices.list({ lookup_keys: [item.priceId] });
+              if (!prices.data.length) {
+                return Response.json(
+                  { error: `Price not found: ${item.priceId}` },
+                  { status: 404 }
+                );
+              }
+              lineItems.push({ price: prices.data[0].id, quantity: item.quantity || 1 });
+            } else {
+              return Response.json(
+                { error: "Invalid item: provide priceId or amountInCents+productName" },
+                { status: 400 }
+              );
+            }
           }
 
           const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/$/, "") || "";
@@ -77,14 +76,13 @@ export const Route = createFileRoute("/api/public/create-checkout")({
           });
 
           return Response.json(
-            { clientSecret: session.client_secret },
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            { clientSecret: session.client_secret }
           );
         } catch (error: any) {
           console.error("create-checkout error:", error);
           return Response.json(
             { error: error.message },
-            { status: 500, headers: corsHeaders }
+            { status: 500 }
           );
         }
       },
