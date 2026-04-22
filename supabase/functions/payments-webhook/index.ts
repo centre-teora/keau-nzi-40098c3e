@@ -7,6 +7,65 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
+const PRINTFUL_API_BASE = "https://api.printful.com";
+
+async function createPrintfulOrder(session: any) {
+  const apiKey = Deno.env.get("PRINTFUL_API_KEY");
+  if (!apiKey) {
+    console.log("PRINTFUL_API_KEY not set — skipping fulfillment");
+    return;
+  }
+
+  const shipping = session.shipping_details;
+  if (!shipping?.address) {
+    console.log("No shipping address — skipping Printful order");
+    return;
+  }
+
+  const items = session.metadata?.items ? JSON.parse(session.metadata.items) : [];
+  if (items.length === 0) {
+    console.log("No items in metadata — skipping Printful order");
+    return;
+  }
+
+  const orderData = {
+    external_id: session.id,
+    recipient: {
+      name: shipping.name || session.customer_details?.name || "Client",
+      address1: shipping.address.line1,
+      address2: shipping.address.line2 || undefined,
+      city: shipping.address.city,
+      state_code: shipping.address.state || undefined,
+      country_code: shipping.address.country,
+      zip: shipping.address.postal_code,
+      email: session.customer_details?.email,
+    },
+    items: items.map((item: any) => ({
+      sync_variant_id: item.syncVariantId,
+      quantity: item.quantity,
+    })),
+  };
+
+  try {
+    const res = await fetch(`${PRINTFUL_API_BASE}/orders`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      console.error("Printful order error:", data);
+    } else {
+      console.log("Printful order created:", data.result?.id);
+    }
+  } catch (e) {
+    console.error("Printful order failed:", e);
+  }
+}
+
 serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -40,6 +99,8 @@ serve(async (req) => {
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   console.log("Checkout completed:", session.id, "env:", env);
 
+  const userId = session.metadata?.userId || null;
+
   await supabase.from("orders").insert({
     stripe_session_id: session.id,
     stripe_customer_id: session.customer,
@@ -51,5 +112,9 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     shipping_address: session.shipping_details?.address || null,
     metadata: session.metadata || {},
     environment: env,
+    user_id: userId,
   });
+
+  // Trigger Printful fulfillment
+  await createPrintfulOrder(session);
 }
