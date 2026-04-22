@@ -51,7 +51,9 @@ function CheckoutPage() {
       };
     }
     return {
-      priceId: item.priceId,
+      productName: item.product.name,
+      amountInCents: Math.round(item.product.price * 100),
+      currency: (item.product.currency || "EUR").toLowerCase(),
       quantity: item.quantity,
     };
   });

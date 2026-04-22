@@ -38,6 +38,16 @@ export const Route = createFileRoute("/api/public/create-checkout")({
                 },
                 quantity: item.quantity || 1,
               });
+            } else if (item.amountInCents && item.productName) {
+              // Dynamic pricing for Printful / external products
+              lineItems.push({
+                price_data: {
+                  currency: item.currency || "eur",
+                  product_data: { name: item.productName },
+                  unit_amount: item.amountInCents,
+                },
+                quantity: item.quantity || 1,
+              });
             } else if (
               item.priceId &&
               typeof item.priceId === "string" &&
@@ -73,7 +83,7 @@ export const Route = createFileRoute("/api/public/create-checkout")({
           const session = await stripe.checkout.sessions.create({
             line_items: lineItems,
             mode: "payment",
-            ui_mode: "embedded_page",
+            ui_mode: "embedded",
             return_url:
               returnUrl ||
               `${origin}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,

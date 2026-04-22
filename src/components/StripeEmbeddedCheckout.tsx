@@ -2,9 +2,12 @@ import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 
 export interface CheckoutItem {
-  priceId: string;
+  priceId?: string;
   quantity: number;
   slug?: string;
+  productName?: string;
+  amountInCents?: number;
+  currency?: string;
 }
 
 interface Props {
