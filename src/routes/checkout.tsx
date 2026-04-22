@@ -3,6 +3,7 @@ import { useCart } from "@/lib/cart";
 import { StripeEmbeddedCheckoutForm, type CheckoutItem } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { ShoppingBag } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/checkout")({
 
 function CheckoutPage() {
   const { items, totalPrice } = useCart();
+  const { user } = useAuth();
 
   if (items.length === 0) {
     return (
@@ -69,6 +71,8 @@ function CheckoutPage() {
           <StripeEmbeddedCheckoutForm
             items={checkoutItems}
             returnUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`}
+            customerEmail={user?.email ?? undefined}
+            metadata={user ? { userId: user.id } : undefined}
           />
         </div>
 

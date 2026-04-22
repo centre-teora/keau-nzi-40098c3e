@@ -68,6 +68,9 @@ export const Route = createFileRoute("/api/public/create-checkout")({
               `${origin}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
             ...(customerEmail && { customer_email: customerEmail }),
             ...(metadata && { metadata }),
+            ...(metadata?.userId && {
+              payment_intent_data: { metadata: { userId: metadata.userId } },
+            }),
             shipping_address_collection: {
               allowed_countries: [
                 "FR", "BE", "CH", "LU", "CA", "DE", "ES", "IT", "PT", "NL", "GB",
