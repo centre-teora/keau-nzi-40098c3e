@@ -1,30 +1,28 @@
 
-## Garder Lovable Cloud — aucune action nécessaire
 
-Tu as choisi l'option 1 : on garde Lovable Cloud comme système de base de données. **Rien à modifier dans le code.**
+## Probleme identifie
 
-### Ce qui reste en place
+L'erreur Stripe est claire : **`ui_mode: "embedded"` n'est plus supporte par Stripe**. L'API exige maintenant `ui_mode: "embedded_page"`.
 
-- **Table `contact_messages`** — stocke les messages envoyés depuis `/contact`
-- **Table `reviews`** — stocke les avis clients affichés via le composant `ReviewList`
-- **Authentification, stockage de fichiers, edge functions** — disponibles si besoin futur
-- **Intégrations Printful, Stripe, PayPal** — continuent de fonctionner avec le backend actuel
+Le message exact retourne par Stripe :
+> "The ui_mode value `embedded` is no longer supported. Use `embedded_page` instead."
 
-### Ce que ça veut dire pour toi
+## Plan de correction
 
-- Tu n'as **jamais** besoin d'aller sur un site externe
-- Pas de clés API à gérer manuellement
-- Tout reste pilotable depuis l'éditeur Lovable
-- Les données déjà collectées (messages, avis) restent intactes
+### 1. Mettre a jour le serveur API (`src/routes/api/public/create-checkout.ts`)
 
-### Aucune modification de fichier
+Remplacer `ui_mode: "embedded"` par `ui_mode: "embedded_page"` dans l'appel `stripe.checkout.sessions.create()`.
 
-Aucun fichier ne sera touché. Le projet continue exactement comme avant.
+### 2. Mettre a jour la edge function (`supabase/functions/create-checkout/index.ts`)
 
-### Et après ?
+Meme correction : remplacer `ui_mode: "embedded"` par `ui_mode: "embedded_page"`.
 
-Si tu veux exploiter davantage Lovable Cloud, voici des extensions naturelles pour Keau-Nzi :
-- **Dashboard admin** pour lire les messages de contact et modérer les avis
-- **Système de commandes** lié à Printful (historique client, suivi de livraison)
-- **Compte client** avec authentification (favoris, historique d'achats)
-- **Newsletter** avec table `subscribers` et formulaire d'inscription
+### Fichiers modifies
+
+| Fichier | Modification |
+|---------|-------------|
+| `src/routes/api/public/create-checkout.ts` | `ui_mode: "embedded"` → `"embedded_page"` |
+| `supabase/functions/create-checkout/index.ts` | `ui_mode: "embedded"` → `"embedded_page"` |
+
+C'est un changement minimal (une ligne par fichier) qui devrait resoudre le probleme immediatement.
+
