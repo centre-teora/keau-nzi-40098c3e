@@ -45,6 +45,7 @@ function CheckoutPage() {
     const isLocal = LOCAL_PRICE_IDS.includes(item.priceId);
     if (isLocal) {
       return {
+        slug: item.product.slug,
         priceId: item.priceId,
         quantity: item.quantity,
       };
@@ -52,9 +53,6 @@ function CheckoutPage() {
     return {
       priceId: item.priceId,
       quantity: item.quantity,
-      productName: item.product.name,
-      amountInCents: Math.round(item.product.price * 100),
-      currency: item.product.currency || "EUR",
     };
   });
 
