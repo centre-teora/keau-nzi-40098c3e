@@ -8,28 +8,42 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId, quantity, customerEmail, returnUrl, environment, metadata } = await req.json();
-    if (!priceId || typeof priceId !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(priceId)) {
-      return new Response(JSON.stringify({ error: "Invalid priceId" }), {
+    const { priceId, quantity, customerEmail, returnUrl, environment, metadata, productName, amountInCents, currency } = await req.json();
+
+    const env = (environment || 'sandbox') as StripeEnv;
+    const stripe = createStripeClient(env);
+
+    let lineItems;
+
+    // If amountInCents is provided, use dynamic price_data (for Printful products etc.)
+    if (amountInCents && productName) {
+      lineItems = [{
+        price_data: {
+          currency: (currency || 'eur').toLowerCase(),
+          product_data: { name: productName },
+          unit_amount: Math.round(amountInCents),
+        },
+        quantity: quantity || 1,
+      }];
+    } else if (priceId && typeof priceId === 'string' && /^[a-zA-Z0-9_-]+$/.test(priceId)) {
+      // Resolve lookup key to Stripe price
+      const prices = await stripe.prices.list({ lookup_keys: [priceId] });
+      if (!prices.data.length) {
+        return new Response(JSON.stringify({ error: "Price not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      lineItems = [{ price: prices.data[0].id, quantity: quantity || 1 }];
+    } else {
+      return new Response(JSON.stringify({ error: "Invalid request: provide priceId or amountInCents+productName" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const env = (environment || 'sandbox') as StripeEnv;
-    const stripe = createStripeClient(env);
-
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-    if (!prices.data.length) {
-      return new Response(JSON.stringify({ error: "Price not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const stripePrice = prices.data[0];
-
     const session = await stripe.checkout.sessions.create({
-      line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
+      line_items: lineItems,
       mode: "payment",
       ui_mode: "embedded",
       return_url: returnUrl || `${req.headers.get("origin")}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
