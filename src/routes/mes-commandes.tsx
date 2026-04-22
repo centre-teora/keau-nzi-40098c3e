@@ -22,6 +22,9 @@ interface Order {
   status: string;
   customer_name: string | null;
   stripe_session_id: string;
+  printful_status: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
 }
 
 function OrdersPage() {
@@ -38,7 +41,7 @@ function OrdersPage() {
 
     supabase
       .from("orders")
-      .select("id, created_at, amount_total, currency, status, customer_name, stripe_session_id")
+      .select("id, created_at, amount_total, currency, status, customer_name, stripe_session_id, printful_status, tracking_number, tracking_url")
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         setOrders((data as Order[]) || []);
@@ -119,6 +122,32 @@ function OrdersPage() {
                     {(order.amount_total / 100).toFixed(2)} {order.currency === "eur" ? "€" : order.currency}
                   </span>
                 </div>
+                {(order.printful_status || order.tracking_number) && (
+                  <div className="mt-3 pt-3 border-t border-border flex flex-wrap items-center gap-3">
+                    {order.printful_status && (
+                      <span className="text-xs text-muted-foreground">
+                        Fabrication : <span className="capitalize">{
+                          order.printful_status === "fulfilled" ? "Expédié" :
+                          order.printful_status === "inprocess" ? "En production" :
+                          order.printful_status === "pending" ? "En attente" :
+                          order.printful_status === "canceled" ? "Annulé" :
+                          order.printful_status
+                        }</span>
+                      </span>
+                    )}
+                    {order.tracking_number && (
+                      <span className="text-xs">
+                        {order.tracking_url ? (
+                          <a href={order.tracking_url} target="_blank" rel="noopener noreferrer" className="text-gold underline hover:opacity-80">
+                            Suivi : {order.tracking_number}
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">Suivi : {order.tracking_number}</span>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

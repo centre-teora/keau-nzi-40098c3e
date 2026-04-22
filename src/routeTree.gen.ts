@@ -23,6 +23,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
+import { Route as ApiPublicPrintfulWebhookRouteImport } from './routes/api/public/printful-webhook'
 import { Route as ApiPublicCreateCheckoutRouteImport } from './routes/api/public/create-checkout'
 
 const PolitiqueDeConfidentialiteRoute =
@@ -96,6 +97,12 @@ const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
   path: '/commande/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPrintfulWebhookRoute =
+  ApiPublicPrintfulWebhookRouteImport.update({
+    id: '/api/public/printful-webhook',
+    path: '/api/public/printful-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCreateCheckoutRoute = ApiPublicCreateCheckoutRouteImport.update({
   id: '/api/public/create-checkout',
   path: '/api/public/create-checkout',
@@ -118,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/printful-webhook': typeof ApiPublicPrintfulWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -135,6 +143,7 @@ export interface FileRoutesByTo {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/printful-webhook': typeof ApiPublicPrintfulWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,6 +162,7 @@ export interface FileRoutesById {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/printful-webhook': typeof ApiPublicPrintfulWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/printful-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/printful-webhook'
   id:
     | '__root__'
     | '/'
@@ -206,6 +218,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/printful-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -224,6 +237,7 @@ export interface RootRouteChildren {
   CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   ProduitSlugRoute: typeof ProduitSlugRoute
   ApiPublicCreateCheckoutRoute: typeof ApiPublicCreateCheckoutRoute
+  ApiPublicPrintfulWebhookRoute: typeof ApiPublicPrintfulWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -326,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandeConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/printful-webhook': {
+      id: '/api/public/printful-webhook'
+      path: '/api/public/printful-webhook'
+      fullPath: '/api/public/printful-webhook'
+      preLoaderRoute: typeof ApiPublicPrintfulWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/create-checkout': {
       id: '/api/public/create-checkout'
       path: '/api/public/create-checkout'
@@ -352,7 +373,17 @@ const rootRouteChildren: RootRouteChildren = {
   CommandeConfirmationRoute: CommandeConfirmationRoute,
   ProduitSlugRoute: ProduitSlugRoute,
   ApiPublicCreateCheckoutRoute: ApiPublicCreateCheckoutRoute,
+  ApiPublicPrintfulWebhookRoute: ApiPublicPrintfulWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
