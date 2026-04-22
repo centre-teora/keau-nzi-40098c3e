@@ -41,6 +41,54 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          amount_total: number
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          environment: string
+          id: string
+          metadata: Json | null
+          shipping_address: Json | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_session_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount_total: number
+          created_at?: string | null
+          currency?: string
+          customer_email: string
+          customer_name?: string | null
+          environment?: string
+          id?: string
+          metadata?: Json | null
+          shipping_address?: Json | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_session_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount_total?: number
+          created_at?: string | null
+          currency?: string
+          customer_email?: string
+          customer_name?: string | null
+          environment?: string
+          id?: string
+          metadata?: Json | null
+          shipping_address?: Json | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_session_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           author_name: string
