@@ -1,17 +1,49 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { timingSafeEqual } from "crypto";
+
+const ALLOWED_EVENTS = new Set([
+  "package_shipped",
+  "order_created",
+  "order_updated",
+  "order_failed",
+  "order_canceled",
+]);
 
 export const Route = createFileRoute("/api/public/printful-webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
+          // Verify shared secret token
+          const url = new URL(request.url);
+          const token = url.searchParams.get("token");
+          const expectedToken = process.env.PRINTFUL_WEBHOOK_SECRET;
+
+          if (!expectedToken) {
+            console.error("PRINTFUL_WEBHOOK_SECRET not configured");
+            return new Response("Server error", { status: 500 });
+          }
+
+          if (
+            !token ||
+            token.length !== expectedToken.length ||
+            !timingSafeEqual(Buffer.from(token), Buffer.from(expectedToken))
+          ) {
+            return new Response("Unauthorized", { status: 401 });
+          }
+
           const body = await request.json();
           const eventType = body?.type;
           const orderData = body?.data?.order;
 
           if (!eventType || !orderData) {
             return new Response("Invalid payload", { status: 400 });
+          }
+
+          if (!ALLOWED_EVENTS.has(eventType)) {
+            console.log("Ignoring unexpected event type:", eventType);
+            return Response.json({ received: true });
           }
 
           console.log("Printful webhook:", eventType, "order:", orderData.id);
