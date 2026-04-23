@@ -20,7 +20,7 @@ serve(async (req) => {
   try {
     // First check existing webhooks
     const existingRes = await fetch("https://api.printful.com/webhooks", {
-      headers: { "Authorization": `Bearer ${printfulKey}`, "X-PF-Store-Id": "app-1277828" },
+      headers: { "Authorization": `Bearer ${printfulKey}`, "X-PF-Store-Id": "app-9086039" },
     });
     const existing = await existingRes.json();
     console.log("Existing Printful webhooks:", JSON.stringify(existing));
@@ -29,7 +29,7 @@ serve(async (req) => {
     const res = await fetch("https://api.printful.com/webhooks", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${printfulKey}`, "X-PF-Store-Id": "app-1277828",
+        "Authorization": `Bearer ${printfulKey}`, "X-PF-Store-Id": "app-9086039",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
