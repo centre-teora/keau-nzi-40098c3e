@@ -5,6 +5,8 @@
 
 const PRINTFUL_API_BASE_URL = "https://api.printful.com";
 
+const PRINTFUL_STORE_ID = "app-5222541";
+
 async function printfulFetch<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -19,6 +21,7 @@ async function printfulFetch<T>(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      "X-PF-Store-Id": PRINTFUL_STORE_ID,
       ...options.headers,
     },
   });

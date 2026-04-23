@@ -53,6 +53,7 @@ async function createPrintfulOrder(session: any): Promise<number | null> {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "X-PF-Store-Id": "app-5222541",
       },
       body: JSON.stringify(orderData),
     });
