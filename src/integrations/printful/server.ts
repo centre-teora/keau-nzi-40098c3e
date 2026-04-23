@@ -5,7 +5,7 @@
 
 const PRINTFUL_API_BASE_URL = "https://api.printful.com";
 
-const PRINTFUL_STORE_ID = "app-5222541";
+const PRINTFUL_STORE_ID = "app-1277828";
 
 async function printfulFetch<T>(
   endpoint: string,
