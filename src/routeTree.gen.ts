@@ -23,6 +23,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
+import { Route as AdminPrintfulRouteImport } from './routes/admin.printful'
 import { Route as ApiPublicLovableWebhookRouteImport } from './routes/api/public/lovable-webhook'
 import { Route as ApiPublicCreateCheckoutRouteImport } from './routes/api/public/create-checkout'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -98,6 +99,11 @@ const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
   path: '/commande/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPrintfulRoute = AdminPrintfulRouteImport.update({
+  id: '/admin/printful',
+  path: '/admin/printful',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicLovableWebhookRoute = ApiPublicLovableWebhookRouteImport.update({
   id: '/api/public/lovable-webhook',
   path: '/api/public/lovable-webhook',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/mes-commandes': typeof MesCommandesRoute
   '/panier': typeof PanierRoute
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
+  '/admin/printful': typeof AdminPrintfulRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/mes-commandes': typeof MesCommandesRoute
   '/panier': typeof PanierRoute
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
+  '/admin/printful': typeof AdminPrintfulRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/mes-commandes': typeof MesCommandesRoute
   '/panier': typeof PanierRoute
   '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
+  '/admin/printful': typeof AdminPrintfulRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/mes-commandes'
     | '/panier'
     | '/politique-de-confidentialite'
+    | '/admin/printful'
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/mes-commandes'
     | '/panier'
     | '/politique-de-confidentialite'
+    | '/admin/printful'
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/mes-commandes'
     | '/panier'
     | '/politique-de-confidentialite'
+    | '/admin/printful'
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   MesCommandesRoute: typeof MesCommandesRoute
   PanierRoute: typeof PanierRoute
   PolitiqueDeConfidentialiteRoute: typeof PolitiqueDeConfidentialiteRoute
+  AdminPrintfulRoute: typeof AdminPrintfulRoute
   CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   ProduitSlugRoute: typeof ProduitSlugRoute
   ApiPublicCreateCheckoutRoute: typeof ApiPublicCreateCheckoutRoute
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandeConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/printful': {
+      id: '/admin/printful'
+      path: '/admin/printful'
+      fullPath: '/admin/printful'
+      preLoaderRoute: typeof AdminPrintfulRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/lovable-webhook': {
       id: '/api/public/lovable-webhook'
       path: '/api/public/lovable-webhook'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   MesCommandesRoute: MesCommandesRoute,
   PanierRoute: PanierRoute,
   PolitiqueDeConfidentialiteRoute: PolitiqueDeConfidentialiteRoute,
+  AdminPrintfulRoute: AdminPrintfulRoute,
   CommandeConfirmationRoute: CommandeConfirmationRoute,
   ProduitSlugRoute: ProduitSlugRoute,
   ApiPublicCreateCheckoutRoute: ApiPublicCreateCheckoutRoute,
