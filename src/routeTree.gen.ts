@@ -23,6 +23,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
+import { Route as ApiPublicLovableWebhookRouteImport } from './routes/api/public/lovable-webhook'
 import { Route as ApiPublicCreateCheckoutRouteImport } from './routes/api/public/create-checkout'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
@@ -97,6 +98,11 @@ const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
   path: '/commande/confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicLovableWebhookRoute = ApiPublicLovableWebhookRouteImport.update({
+  id: '/api/public/lovable-webhook',
+  path: '/api/public/lovable-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCreateCheckoutRoute = ApiPublicCreateCheckoutRouteImport.update({
   id: '/api/public/create-checkout',
   path: '/api/public/create-checkout',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
+  '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/lovable-webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/lovable-webhook'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/commande/confirmation'
     | '/produit/$slug'
     | '/api/public/create-checkout'
+    | '/api/public/lovable-webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   ProduitSlugRoute: typeof ProduitSlugRoute
   ApiPublicCreateCheckoutRoute: typeof ApiPublicCreateCheckoutRoute
+  ApiPublicLovableWebhookRoute: typeof ApiPublicLovableWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandeConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/lovable-webhook': {
+      id: '/api/public/lovable-webhook'
+      path: '/api/public/lovable-webhook'
+      fullPath: '/api/public/lovable-webhook'
+      preLoaderRoute: typeof ApiPublicLovableWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/create-checkout': {
       id: '/api/public/create-checkout'
       path: '/api/public/create-checkout'
@@ -373,6 +393,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommandeConfirmationRoute: CommandeConfirmationRoute,
   ProduitSlugRoute: ProduitSlugRoute,
   ApiPublicCreateCheckoutRoute: ApiPublicCreateCheckoutRoute,
+  ApiPublicLovableWebhookRoute: ApiPublicLovableWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
