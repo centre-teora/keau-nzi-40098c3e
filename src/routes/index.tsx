@@ -3,11 +3,9 @@ import heroImg from "@/assets/hero-flower-of-life.png";
 import { products as fallbackProducts } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { ReviewList } from "@/components/ReviewList";
-import { listShopProducts, type ShopProduct } from "@/integrations/printful/products.functions";
 import { Sparkles, Heart, Leaf } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  loader: () => listShopProducts(),
   head: () => ({
     meta: [
       { title: "Keau-Nzi — Géométrie sacrée pour votre pratique spirituelle" },
@@ -23,9 +21,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { products: printfulProducts } = Route.useLoaderData();
-  const hasPrintful = printfulProducts.length > 0;
-
   return (
     <>
       {/* HERO */}
@@ -88,7 +83,7 @@ function HomePage() {
             {
               icon: Leaf,
               title: "Production éthique",
-              text: "Fabriqués à la demande via Printful — zéro stock, impact réduit.",
+              text: "Fabriqués à la demande — zéro stock, impact réduit.",
             },
           ].map((v) => (
             <div key={v.title} className="text-center px-4">
@@ -112,42 +107,9 @@ function HomePage() {
             <h2 className="text-3xl md:text-5xl font-display">Objets sacrés</h2>
           </div>
           <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
-            {hasPrintful
-              ? printfulProducts.map((p: ShopProduct) => (
-                  <Link
-                    key={p.id}
-                    to="/produit/$slug"
-                    params={{ slug: p.slug }}
-                    className="group block"
-                  >
-                    <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all duration-500 hover:border-gold hover:shadow-gold">
-                      <div className="aspect-square overflow-hidden bg-secondary">
-                        <img
-                          src={p.thumbnail}
-                          alt={p.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      </div>
-                      <div className="p-5">
-                        <h3 className="text-xl font-display text-foreground group-hover:text-gold transition-colors">
-                          {p.name}
-                        </h3>
-                        <div className="mt-4 flex items-center justify-between">
-                          <span className="text-lg text-gold font-medium">
-                            {p.price.toFixed(2)} {p.currency === "EUR" ? "€" : p.currency}
-                          </span>
-                          <span className="text-xs uppercase tracking-widest text-muted-foreground group-hover:text-gold transition-colors">
-                            Découvrir →
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              : fallbackProducts.map((p) => (
-                  <ProductCard key={p.slug} product={p} />
-                ))}
+            {fallbackProducts.map((p) => (
+              <ProductCard key={p.slug} product={p} />
+            ))}
           </div>
         </div>
       </section>
