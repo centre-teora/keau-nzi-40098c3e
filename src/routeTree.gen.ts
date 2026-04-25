@@ -24,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
 import { Route as AdminPrintfulRouteImport } from './routes/admin.printful'
+import { Route as ApiPublicPrintfulTestRouteImport } from './routes/api/public/printful-test'
 import { Route as ApiPublicLovableWebhookRouteImport } from './routes/api/public/lovable-webhook'
 import { Route as ApiPublicCreateCheckoutRouteImport } from './routes/api/public/create-checkout'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -104,6 +105,11 @@ const AdminPrintfulRoute = AdminPrintfulRouteImport.update({
   path: '/admin/printful',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPrintfulTestRoute = ApiPublicPrintfulTestRouteImport.update({
+  id: '/api/public/printful-test',
+  path: '/api/public/printful-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicLovableWebhookRoute = ApiPublicLovableWebhookRouteImport.update({
   id: '/api/public/lovable-webhook',
   path: '/api/public/lovable-webhook',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
   '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
+  '/api/public/printful-test': typeof ApiPublicPrintfulTestRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
   '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
+  '/api/public/printful-test': typeof ApiPublicPrintfulTestRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/produit/$slug': typeof ProduitSlugRoute
   '/api/public/create-checkout': typeof ApiPublicCreateCheckoutRoute
   '/api/public/lovable-webhook': typeof ApiPublicLovableWebhookRoute
+  '/api/public/printful-test': typeof ApiPublicPrintfulTestRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/produit/$slug'
     | '/api/public/create-checkout'
     | '/api/public/lovable-webhook'
+    | '/api/public/printful-test'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/produit/$slug'
     | '/api/public/create-checkout'
     | '/api/public/lovable-webhook'
+    | '/api/public/printful-test'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/produit/$slug'
     | '/api/public/create-checkout'
     | '/api/public/lovable-webhook'
+    | '/api/public/printful-test'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
@@ -263,6 +275,7 @@ export interface RootRouteChildren {
   ProduitSlugRoute: typeof ProduitSlugRoute
   ApiPublicCreateCheckoutRoute: typeof ApiPublicCreateCheckoutRoute
   ApiPublicLovableWebhookRoute: typeof ApiPublicLovableWebhookRoute
+  ApiPublicPrintfulTestRoute: typeof ApiPublicPrintfulTestRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -373,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPrintfulRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/printful-test': {
+      id: '/api/public/printful-test'
+      path: '/api/public/printful-test'
+      fullPath: '/api/public/printful-test'
+      preLoaderRoute: typeof ApiPublicPrintfulTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/lovable-webhook': {
       id: '/api/public/lovable-webhook'
       path: '/api/public/lovable-webhook'
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProduitSlugRoute: ProduitSlugRoute,
   ApiPublicCreateCheckoutRoute: ApiPublicCreateCheckoutRoute,
   ApiPublicLovableWebhookRoute: ApiPublicLovableWebhookRoute,
+  ApiPublicPrintfulTestRoute: ApiPublicPrintfulTestRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
