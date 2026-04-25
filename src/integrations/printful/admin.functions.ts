@@ -10,9 +10,42 @@ const WEBHOOK_TYPES = [
   "package_shipped",
 ];
 
+type JsonLike =
+  | Record<string, unknown>
+  | unknown[]
+  | string
+  | number
+  | boolean
+  | null;
+
+export type PrintfulResult = {
+  ok: boolean;
+  status: number;
+  url: string;
+  authType: string;
+  error?: string;
+  body?: JsonLike;
+  tokenLength?: number;
+  store?: JsonLike;
+  webhookUrl?: string;
+  types?: string[];
+  response?: JsonLike;
+  sentPayload?: { url: string; types: string[] };
+};
+
 function getToken(): string | null {
   const token = process.env.PRINTFUL_API_KEY;
   return token && token.trim().length > 0 ? token.trim() : null;
+}
+
+async function readBody(res: Response): Promise<JsonLike> {
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text) as JsonLike;
+  } catch {
+    return text;
+  }
 }
 
 /**
@@ -20,7 +53,7 @@ function getToken(): string | null {
  * En cas d'erreur, renvoie un diagnostic SANS jamais exposer le token.
  */
 export const testPrintfulToken = createServerFn({ method: "POST" }).handler(
-  async () => {
+  async (): Promise<PrintfulResult> => {
     const token = getToken();
     if (!token) {
       return {
@@ -41,13 +74,7 @@ export const testPrintfulToken = createServerFn({ method: "POST" }).handler(
       },
     });
 
-    const bodyText = await res.text();
-    let body: unknown = bodyText;
-    try {
-      body = JSON.parse(bodyText);
-    } catch {
-      // garde le texte brut
-    }
+    const body = await readBody(res);
 
     if (!res.ok) {
       return {
@@ -78,7 +105,7 @@ export const testPrintfulToken = createServerFn({ method: "POST" }).handler(
  * Enregistre le webhook Lovable auprès de Printful via POST /webhooks.
  */
 export const registerPrintfulWebhook = createServerFn({ method: "POST" }).handler(
-  async () => {
+  async (): Promise<PrintfulResult> => {
     const token = getToken();
     if (!token) {
       return {
@@ -91,10 +118,7 @@ export const registerPrintfulWebhook = createServerFn({ method: "POST" }).handle
     }
 
     const url = `${PRINTFUL_API}/webhooks`;
-    const payload = {
-      url: WEBHOOK_URL,
-      types: WEBHOOK_TYPES,
-    };
+    const payload = { url: WEBHOOK_URL, types: WEBHOOK_TYPES };
 
     const res = await fetch(url, {
       method: "POST",
@@ -105,13 +129,7 @@ export const registerPrintfulWebhook = createServerFn({ method: "POST" }).handle
       body: JSON.stringify(payload),
     });
 
-    const bodyText = await res.text();
-    let body: unknown = bodyText;
-    try {
-      body = JSON.parse(bodyText);
-    } catch {
-      // garde le texte brut
-    }
+    const body = await readBody(res);
 
     if (!res.ok) {
       return {
@@ -129,6 +147,7 @@ export const registerPrintfulWebhook = createServerFn({ method: "POST" }).handle
       ok: true,
       status: res.status,
       url,
+      authType: "Bearer (Private Token)",
       webhookUrl: WEBHOOK_URL,
       types: WEBHOOK_TYPES,
       response: body,
