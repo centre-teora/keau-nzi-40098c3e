@@ -24,21 +24,25 @@ export const Route = createFileRoute("/api/public/lovable-webhook")({
             }
           }
 
-          // Enregistrement asynchrone (best-effort) — on n'attend pas pour répondre 200.
+          // On attend l'insert (le runtime Worker peut couper les tâches détachées
+          // après la réponse). On l'entoure d'un try/catch pour ne JAMAIS faire
+          // échouer la réponse 200.
           if (payload !== null) {
-            void supabaseAdmin
-              .from("printful_webhook_events")
-              .insert([
-                {
-                  event_type: eventType,
-                  payload: payload as never,
-                },
-              ])
-              .then(({ error }) => {
-                if (error) {
-                  console.error("[lovable-webhook] insert error:", error.message);
-                }
-              });
+            try {
+              const { error } = await supabaseAdmin
+                .from("printful_webhook_events")
+                .insert([
+                  {
+                    event_type: eventType,
+                    payload: payload as never,
+                  },
+                ]);
+              if (error) {
+                console.error("[lovable-webhook] insert error:", error.message);
+              }
+            } catch (err) {
+              console.error("[lovable-webhook] insert threw:", err);
+            }
           }
         } catch (err) {
           console.error("[lovable-webhook] handler error:", err);
