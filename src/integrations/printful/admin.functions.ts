@@ -10,13 +10,14 @@ const WEBHOOK_TYPES = [
   "package_shipped",
 ];
 
-type JsonLike =
-  | Record<string, unknown>
-  | unknown[]
+type JsonValue =
   | string
   | number
   | boolean
-  | null;
+  | null
+  | { [k: string]: JsonValue }
+  | JsonValue[];
+type JsonLike = JsonValue;
 
 export type PrintfulResult = {
   ok: boolean;
@@ -42,7 +43,7 @@ async function readBody(res: Response): Promise<JsonLike> {
   const text = await res.text();
   if (!text) return null;
   try {
-    return JSON.parse(text) as JsonLike;
+    return JSON.parse(text) as JsonValue;
   } catch {
     return text;
   }
