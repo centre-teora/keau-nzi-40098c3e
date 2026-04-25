@@ -28,10 +28,12 @@ export const Route = createFileRoute("/api/public/lovable-webhook")({
           if (payload !== null) {
             void supabaseAdmin
               .from("printful_webhook_events")
-              .insert({
-                event_type: eventType,
-                payload: payload as object,
-              })
+              .insert([
+                {
+                  event_type: eventType,
+                  payload: payload as object,
+                },
+              ])
               .then(({ error }) => {
                 if (error) {
                   console.error("[lovable-webhook] insert error:", error.message);
