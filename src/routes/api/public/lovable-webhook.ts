@@ -31,7 +31,7 @@ export const Route = createFileRoute("/api/public/lovable-webhook")({
               .insert([
                 {
                   event_type: eventType,
-                  payload: payload as object,
+                  payload: payload as never,
                 },
               ])
               .then(({ error }) => {
