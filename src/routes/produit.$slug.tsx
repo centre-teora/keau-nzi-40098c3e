@@ -129,19 +129,6 @@ function ProductPage() {
             </ul>
           )}
 
-          {source === "printful" && (product as any).variants && (product as any).variants.length > 1 && (
-            <div className="mt-8">
-              <p className="text-sm font-medium text-foreground mb-3">Variantes disponibles</p>
-              <ul className="space-y-2">
-                {(product as any).variants.map((v: any) => (
-                  <li key={v.id} className="flex justify-between text-sm text-muted-foreground">
-                    <span>{v.name}</span>
-                    <span className="text-gold">{v.price.toFixed(2)} {v.currency === "EUR" ? "€" : v.currency}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </div>
 
