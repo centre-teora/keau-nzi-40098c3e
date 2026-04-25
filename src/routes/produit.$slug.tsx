@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getProduct } from "@/lib/products";
-import { getShopProduct } from "@/integrations/printful/products.functions";
 import { ReviewList } from "@/components/ReviewList";
 import { toast } from "sonner";
 import { Check, Star, Truck, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
@@ -10,11 +9,7 @@ export const Route = createFileRoute("/produit/$slug")({
   loader: async ({ params }) => {
     const product = getProduct(params.slug);
     if (product) return { product, source: "local" as const };
-
-    // Try Printful
-    const { product: pfProduct, error } = await getShopProduct({ data: { slug: params.slug } });
-    if (!pfProduct) throw notFound();
-    return { product: pfProduct, source: "printful" as const };
+    throw notFound();
   },
   head: ({ loaderData }) => ({
     meta: loaderData
